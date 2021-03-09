@@ -54,12 +54,12 @@ Whenever a face should be textured, place the entry "tu t" where t is an integer
 a texture (starts at 1!). To stop a texture being used, place the entry "ts". Any face declared
 in between the "tu" and "ts" entries will use the texture.
 example :
-> tm ../textures/earth.ppm
-> tu 1
-> f 1 2 3
-> f 1 3 4
-> f 3 4 2
-> ts 
+\> tm ../textures/earth.ppm
+\> tu 1
+\> f 1 2 3
+\> f 1 3 4
+\> f 3 4 2
+\> ts 
 
 4) OpenGL color 
 Keeping this for debugging, affects the OpenGL viewport on the left. The entry starts
