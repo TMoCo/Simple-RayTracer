@@ -9,14 +9,14 @@ make
 
 
 
-* Modifications to the textured object: 
+# Modifications to the textured object: 
 
 I used a Triangle struct containing three small arrays for the vertices data. 
 This means using a little bit more memory since we need to keep track of what 
 face the triangles belong to but its simpler to iterate over when rendering
 
 
-* Modifications to the .obj file:
+# Modifications to the .obj file:
 
 1) creating and setting materials
 all material entries start with an m. The subsequent character determines what
