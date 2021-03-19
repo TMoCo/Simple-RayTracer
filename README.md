@@ -71,4 +71,4 @@ example :
 Keeping this for debugging, affects the OpenGL viewport on the left. The entry starts
 with a "c" and is followed by three numbers (0-255) for the RGB values. Alpha is set to 255.
 
-![triangle on wood](https://imgur.com/bAvWYRt)
+![triangle on wood](https://i.imgur.com/bAvWYRt.png)
