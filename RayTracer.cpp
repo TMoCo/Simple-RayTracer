@@ -373,7 +373,14 @@ Cartesian3 RayTracer::MonteCarlo3D(const Cartesian3& normal) {
     float u, v, length;
     // loop till we find a valid direction
     while (true) {
+        /*
+        u = RandomRange(0.0f, 1.0f);
+        v = RandomRange(0.0f, 1.0f);
         // compute direction on hemisphere
+        direction.x = std::cos(2.0f * PI * u);
+        direction.y = v;
+        direction.z = std::sin(2.0f * PI * u);
+        */
         direction.x = RandomRange(0.0f, 2.0f) - 1.0f;
         direction.y = RandomRange(0.0f, 2.0f) - 1.0f;
         direction.z = RandomRange(0.0f, 2.0f) - 1.0f;
