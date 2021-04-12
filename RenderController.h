@@ -62,7 +62,6 @@ class RenderController : public QObject
     public slots:
     // slot for responding to arcball rotation for object
     void objectRotationChanged();
-    void lightRotationChanged();
 
     // slots for responding to zoom & translate sliders
     void zoomChanged(int value);
@@ -79,13 +78,6 @@ class RenderController : public QObject
     
     // slot for sample numbe change
     void sampleNumberChanged(int value);
-
-    // slots for responding to lighting parameter changes
-    void emissiveLightChanged(int value);
-    void ambientLightChanged(int value);
-    void diffuseLightChanged(int value);
-    void specularLightChanged(int value);
-    void specularExponentChanged(int value);
 
     // slot for raytracing
     void raytraceButtonPressed();

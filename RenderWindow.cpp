@@ -55,7 +55,6 @@ RenderWindow::RenderWindow
     raytraceRenderWidget        = new RaytraceRenderWidget      (newTexturedObject,     newRenderParameters,        this);
 
     // construct custom arcball Widgets
-    lightRotator                = new ArcBallWidget             (                       this);
     modelRotator                = new ArcBallWidget             (                       this);
 
     // construct standard QT widgets
@@ -75,22 +74,10 @@ RenderWindow::RenderWindow
     yTranslateSlider            = new QSlider                   (Qt::Vertical,          this);
     zoomSlider                  = new QSlider                   (Qt::Vertical,          this);
     
-    // lighting sliders
-    emissiveLightSlider         = new QSlider                   (Qt::Horizontal,        this);
-    ambientLightSlider          = new QSlider                   (Qt::Horizontal,        this);
-    diffuseLightSlider          = new QSlider                   (Qt::Horizontal,        this);
-    specularLightSlider         = new QSlider                   (Qt::Horizontal,        this);
-    specularExponentSlider      = new QSlider                   (Qt::Horizontal,        this);
     samplesNbSlider             = new QSlider                   (Qt::Horizontal,        this);
 
     // labels for sliders and arcballs
     modelRotatorLabel           = new QLabel                    ("Model",               this);
-    lightRotatorLabel           = new QLabel                    ("Light",               this);
-    yTranslateLabel             = new QLabel                    ("Y",                   this);
-    zoomLabel                   = new QLabel                    ("Zm",                  this);
-    emissiveLightLabel          = new QLabel                    ("Samples                      Emissive",            this);
-    ambientLightLabel           = new QLabel                    ("Ambient                      Diffuse",            this);
-    specularLightLabel          = new QLabel                    ("Specular                     Exponent",           this);
 
     // button for raytracing
     rayTraceImageButton         = new QPushButton               ("Render Image",        this);
@@ -106,8 +93,6 @@ RenderWindow::RenderWindow
     windowLayout->addWidget(raytraceRenderWidget,       0,          5,          nStacked,   1           );
 
     // the stack in the middle
-    windowLayout->addWidget(lightRotator,               0,          3,          1,          1           );
-    windowLayout->addWidget(lightRotatorLabel,          1,          3,          1,          1           );
     windowLayout->addWidget(modelRotator,               2,          3,          1,          1           );
     windowLayout->addWidget(modelRotatorLabel,          3,          3,          1,          1           );
     windowLayout->addWidget(showObjectBox,              4,          3,          1,          1           );
@@ -120,35 +105,10 @@ RenderWindow::RenderWindow
 
     // Translate Slider Row
     windowLayout->addWidget(xTranslateSlider,           nStacked,   1,          1,          1           );
-    windowLayout->addWidget(yTranslateLabel,            nStacked,   2,          1,          1           );
-    // nothing in column 3
-    windowLayout->addWidget(zoomLabel,                  nStacked,   4,          1,          1           );
     windowLayout->addWidget(secondXTranslateSlider,     nStacked,   5,          1,          1           );
     
     // Samples Row
     windowLayout->addWidget(samplesNbSlider,            nStacked+1, 1,          1,          1           );
-    // Emissive Row
-    // label covers three columns
-    windowLayout->addWidget(emissiveLightLabel,         nStacked+1, 2,          1,          3           );
-    windowLayout->addWidget(emissiveLightSlider,        nStacked+1, 5,          1,          1           );
-    
-    // Ambient Row
-    // label covers three columns
-    windowLayout->addWidget(ambientLightLabel,          nStacked+2, 2,          1,          3           );
-    windowLayout->addWidget(ambientLightSlider,         nStacked+2, 1,          1,          1           );
-    
-    // Diffuse Row
-    // label covers three columns
-    windowLayout->addWidget(diffuseLightSlider,         nStacked+2, 5,          1,          1           );
-    
-    // Specular Row
-    // label covers three columns
-    windowLayout->addWidget(specularLightLabel,         nStacked+3, 2,          1,          3           );
-    windowLayout->addWidget(specularLightSlider,        nStacked+3, 1,          1,          1           );
-    
-    // Exponent Row
-    // label covers three columns
-    windowLayout->addWidget(specularExponentSlider,     nStacked+3, 5,          1,          1           );
 
     // now reset all of the control elements to match the render parameters passed in
     ResetInterface();
@@ -192,41 +152,14 @@ void RenderWindow::ResetInterface()
     samplesNbSlider         ->setMaximum        (SAMPLES_MAX               );        
     samplesNbSlider         ->setValue          (renderParameters->samples_);        
 
-    emissiveLightSlider     ->setMinimum        ((int) (LIGHTING_MIN                                * PARAMETER_SCALING));
-    emissiveLightSlider     ->setMaximum        ((int) (LIGHTING_MAX                                * PARAMETER_SCALING));
-    emissiveLightSlider     ->setValue          ((int) (renderParameters -> emissiveLight           * PARAMETER_SCALING));
-    
-    ambientLightSlider      ->setMinimum        ((int) (LIGHTING_MIN                                * PARAMETER_SCALING));
-    ambientLightSlider      ->setMaximum        ((int) (LIGHTING_MAX                                * PARAMETER_SCALING));
-    ambientLightSlider      ->setValue          ((int) (renderParameters -> ambientLight            * PARAMETER_SCALING));
-    
-    diffuseLightSlider      ->setMinimum        ((int) (LIGHTING_MIN                                * PARAMETER_SCALING));
-    diffuseLightSlider      ->setMaximum        ((int) (LIGHTING_MAX                                * PARAMETER_SCALING));
-    diffuseLightSlider      ->setValue          ((int) (renderParameters -> diffuseLight            * PARAMETER_SCALING));
-    
-    specularLightSlider ->setMinimum            ((int) (LIGHTING_MIN                                * PARAMETER_SCALING));
-    specularLightSlider ->setMaximum            ((int) (LIGHTING_MAX                                * PARAMETER_SCALING));
-    specularLightSlider ->setValue              ((int) (renderParameters -> specularLight           * PARAMETER_SCALING));
-    
-    // specular exponent slider is a logarithmic scale, so we want a narrow range
-    specularExponentSlider  ->setMinimum        ((int) (SPECULAR_EXPONENT_LOG_MIN                   * PARAMETER_SCALING));
-    specularExponentSlider  ->setMaximum        ((int) (SPECULAR_EXPONENT_LOG_MAX                   * PARAMETER_SCALING));
-    specularExponentSlider  ->setValue          ((int) (log10(renderParameters -> specularExponent) * PARAMETER_SCALING));
-    
     // now flag them all for update 
     renderWidget            ->update();
     raytraceRenderWidget    ->update();
     modelRotator            ->update();
-    lightRotator            ->update();
     xTranslateSlider        ->update();
     secondXTranslateSlider  ->update();
     yTranslateSlider        ->update();
     zoomSlider              ->update();
-    emissiveLightSlider     ->update(); 
-    ambientLightSlider      ->update();
-    diffuseLightSlider      ->update();
-    specularLightSlider 	->update();
-    specularExponentSlider  ->update();
     lightingBox             ->update();
     texturedRenderingBox    ->update();
     textureModulationBox    ->update();

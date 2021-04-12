@@ -70,6 +70,8 @@ bool TexturedObject::ReadObjectStream(std::istream &geometryStream, std::istream
     // create a read buffer
     char readBuffer[MAXIMUM_LINE_LENGTH];
 
+    // triangle id
+    unsigned int id = 0;
     // default area light intensity
     RGBRadiance areaLightIntensity;
     // current colour
@@ -78,6 +80,9 @@ bool TexturedObject::ReadObjectStream(std::istream &geometryStream, std::istream
     unsigned int currentMaterial = 0;
     // current texture, 0 means "don't use texture"
     unsigned int currentTexture = 0;
+    // current light id
+    unsigned int lightId = 1;
+
     // the rest of this is a loop reading lines & adding them in appropriate places
     while (true)
         { // not eof
@@ -165,11 +170,11 @@ bool TexturedObject::ReadObjectStream(std::istream &geometryStream, std::istream
                 // bail if we ran out of file
                 if (geometryStream.eof())
                     break;
-                // create a light object and stream in light data depending on next character
-                Light* light = new Light();
 
                 switch (secondChar) {
                     case 'p': {
+                        // create a light object and stream in light data depending on next character
+                        Light* light = new Light();
                         // start with position
                         geometryStream >> light->position.x;
                         geometryStream >> light->position.y;
@@ -188,6 +193,8 @@ bool TexturedObject::ReadObjectStream(std::istream &geometryStream, std::istream
                     }
                     // a triangle that is part of an area light
                     case 'f': {
+                        // create a light object and stream in light data depending on next character
+                        Light* light = new Light();
                         // set boolean flags
                         light->atInfinity = false;
                         light->isAreaLight = true; 
@@ -198,12 +205,30 @@ bool TexturedObject::ReadObjectStream(std::istream &geometryStream, std::istream
                         // create a string stream
                         std::stringstream lineParse(lineString); 
                         // parse in the face
+                        Triangle* triangle = new Triangle();
+                        unsigned int v = 0;
+                        unsigned int vertexID;
                         while (!lineParse.eof()) {
-                            unsigned int vertexID;
                             lineParse >> vertexID;
-                            light->triangle.push_back(vertexID - 1);
+                            triangle->vertices[v] = vertexID-1;
+                            triangle->texCoords[v] = vertexID-1;
+                            triangle->normals[v++] = vertexID-1;
                         }
+                        // set the colour to the current one
+                        triangle->colour = currentColour;
+                        // set the triangle material to the current one
+                        triangle->material = currentMaterial;
+                        // set the triangle material to the current one
+                        triangle->texID = currentTexture;
+                        // set the triangle's id
+                        triangle->id = id++;
+                        // set the triangle to the light
+                        faces.push_back(triangle);
+                        light->triangle = triangle;
                         light->intensity = areaLightIntensity;
+                        // keep track of area light ids
+                        triangle->lightId = lightId++;
+                        std::cout << "new light with id " << + triangle->lightId << '\n';
                         lights.push_back(light);
                         break;
                     }
@@ -253,6 +278,11 @@ bool TexturedObject::ReadObjectStream(std::istream &geometryStream, std::istream
                         geometryStream >> materials[currentMaterial]->glossy[1];
                         geometryStream >> materials[currentMaterial]->glossy[2];
                         geometryStream >> materials[currentMaterial]->glossy[3];
+                        break;
+                    case 'i': 
+                        geometryStream >> materials[currentMaterial]->albedo[0];
+                        geometryStream >> materials[currentMaterial]->albedo[1];
+                        geometryStream >> materials[currentMaterial]->albedo[2];
                         break;
                     // set the material extinction coefficient
                     case 'x':
@@ -396,6 +426,8 @@ bool TexturedObject::ReadObjectStream(std::istream &geometryStream, std::istream
                         triangle->material = currentMaterial;
                         // set the triangle material to the current one
                         triangle->texID = currentTexture;
+                        // set the triangle's id
+                        triangle->id = id++;
                         // append the triangle to the triangles vector
                         faces.push_back(triangle);
                     }

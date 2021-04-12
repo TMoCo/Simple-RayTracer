@@ -86,8 +86,8 @@ class Ray {
         // compute a parameterised point on the ray 
         Cartesian3 at(const float& t) const { return origin_ + t * direction_; }
 
-        const Cartesian3 origin_;
-        const Cartesian3 direction_;
+        Cartesian3 origin_;
+        Cartesian3 direction_;
 };
 
 // convenience triangle class used for rendering, created when reading in an obj
@@ -99,6 +99,8 @@ class Triangle {
     unsigned int texID;
     unsigned int colour;
     unsigned int material;
+    unsigned int id;
+    unsigned int lightId = 0;
 };
 
 // a material class used for raytracer 
@@ -119,8 +121,8 @@ struct Light {
     bool atInfinity;
     // area light
     bool isAreaLight;
-    // the triangles that form the area light
-    std::vector<unsigned int> triangle;
+    // the triangle that forms the area light
+    Triangle* triangle;
 };
 
 // a structure for representing a pixel

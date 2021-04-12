@@ -42,8 +42,6 @@ RenderController::RenderController
     // signals for arcballs
     QObject::connect(   renderWindow->modelRotator,                 SIGNAL(RotationChanged()),
                         this,                                       SLOT(objectRotationChanged()));
-    QObject::connect(   renderWindow->lightRotator,                 SIGNAL(RotationChanged()),
-                        this,                                       SLOT(lightRotationChanged()));
 
     // signals for main widget to control arcball
     QObject::connect(   renderWindow->renderWidget,                 SIGNAL(BeginScaledDrag(int, float, float)),
@@ -74,27 +72,6 @@ RenderController::RenderController
     // signal for y translate slider
     QObject::connect(   renderWindow->yTranslateSlider,             SIGNAL(valueChanged(int)),
                         this,                                       SLOT(yTranslateChanged(int)));
-
-    // signal for emissive lighting change
-    QObject::connect(   renderWindow->emissiveLightSlider,          SIGNAL(valueChanged(int)),
-                        this,                                       SLOT(emissiveLightChanged(int)));
-
-    // signal for ambient lighting change
-    QObject::connect(   renderWindow->ambientLightSlider,           SIGNAL(valueChanged(int)),
-                        this,                                       SLOT(ambientLightChanged(int)));
-
-    // signal for diffuse lighting change
-    QObject::connect(   renderWindow->diffuseLightSlider,           SIGNAL(valueChanged(int)),
-                        this,                                       SLOT(diffuseLightChanged(int)));
-
-    // signal for specular lighting change
-    QObject::connect(   renderWindow->specularLightSlider,          SIGNAL(valueChanged(int)),
-                        this,                                       SLOT(specularLightChanged(int)));
-
-    // signal for specular exponent change
-    QObject::connect(   renderWindow->specularExponentSlider,       SIGNAL(valueChanged(int)),
-                        this,                                       SLOT(specularExponentChanged(int)));
-
     // signal for check box for lighting
     QObject::connect(   renderWindow->lightingBox,                  SIGNAL(stateChanged(int)),
                         this,                                       SLOT(useLightingCheckChanged(int)));
@@ -128,7 +105,6 @@ RenderController::RenderController
 
     // copy the rotation matrix from the widgets to the model
     renderParameters->rotationMatrix = renderWindow->modelRotator->RotationMatrix();
-    renderParameters->lightMatrix = renderWindow->lightRotator->RotationMatrix();
     } // RenderController::RenderController()
 
 // slot for responding to arcball rotation for object
@@ -140,16 +116,6 @@ void RenderController::objectRotationChanged()
     // reset the interface
     renderWindow->ResetInterface();
     } // RenderController::objectRotationChanged()
-
-// slot for responding to arcball rotation for light
-void RenderController::lightRotationChanged()
-    { // RenderController::lightRotationChanged()
-    // copy the rotation matrix from the widget to the model
-    renderParameters->lightMatrix = renderWindow->lightRotator->RotationMatrix();
-    
-    // reset the interface
-    renderWindow->ResetInterface();
-    } // RenderController::lightRotationChanged()
 
 // slot for responding to zoom slider
 void RenderController::zoomChanged(int value)
@@ -201,86 +167,6 @@ void RenderController::yTranslateChanged(int value)
     // reset the interface
     renderWindow->ResetInterface();
     } // RenderController::yTranslateChanged()
-
-// slot for responding to emissive light slider
-void RenderController::emissiveLightChanged(int value)
-    { // RenderController::emissiveLightChanged()
-    // reset the value (slider ticks are 1/100 each)
-    renderParameters->emissiveLight = (float) value / 100.0;
-    
-    // clamp it
-    if (renderParameters->emissiveLight < LIGHTING_MIN)
-        renderParameters->emissiveLight = LIGHTING_MIN;
-    else if (renderParameters->emissiveLight > LIGHTING_MAX)
-        renderParameters->emissiveLight = LIGHTING_MAX;
-
-    // reset the interface
-    renderWindow->ResetInterface();
-    } // RenderController::emissiveLightChanged()
-
-// slot for responding to ambient albedo slider
-void RenderController::ambientLightChanged(int value)
-    { // RenderController::ambientLightChanged()
-    // reset the value (slider ticks are 1/100 each)
-    renderParameters->ambientLight = (float) value / 100.0;
-    
-    // clamp it
-    if (renderParameters->ambientLight < LIGHTING_MIN)
-        renderParameters->ambientLight = LIGHTING_MIN;
-    else if (renderParameters->ambientLight > LIGHTING_MAX)
-        renderParameters->ambientLight = LIGHTING_MAX;
-    
-    // reset the interface
-    renderWindow->ResetInterface();
-    } // RenderController::ambientLightChanged()
-
-// slot for responding to diffuse albedo slider
-void RenderController::diffuseLightChanged(int value)
-    { // RenderController::diffuseLightChanged()
-    // reset the value (slider ticks are 1/100 each)
-    renderParameters->diffuseLight = (float) value / 100.0;
-    
-    // clamp it
-    if (renderParameters->diffuseLight < LIGHTING_MIN)
-        renderParameters->diffuseLight = LIGHTING_MIN;
-    else if (renderParameters->diffuseLight > LIGHTING_MAX)
-        renderParameters->diffuseLight = LIGHTING_MAX;
-    
-    // reset the interface
-    renderWindow->ResetInterface();
-    } // RenderController::diffuseLightChanged()
-
-// slot for responding to specular albedo slider
-void RenderController::specularLightChanged(int value)
-    { // RenderController::specularLightChanged()
-    // reset the value (slider ticks are 1/100 each)
-    renderParameters->specularLight = (float) value / 100.0;
-    
-    // clamp it
-    if (renderParameters->specularLight < LIGHTING_MIN)
-        renderParameters->specularLight = LIGHTING_MIN;
-    else if (renderParameters->specularLight > LIGHTING_MAX)
-        renderParameters->specularLight = LIGHTING_MAX;
-    
-    // reset the interface
-    renderWindow->ResetInterface();
-    } // RenderController::specularLightChanged()
-
-// slot for responding to specular exponent slider
-void RenderController::specularExponentChanged(int value)
-    { // RenderController::specularExponentChanged()
-    // reset the value (slider ticks are 1/100 each)
-    renderParameters->specularExponent = pow(10.0, (float) value / 100.0);
-    
-    // clamp it
-    if (renderParameters->specularExponent < SPECULAR_EXPONENT_MIN)
-        renderParameters->specularExponent = SPECULAR_EXPONENT_MIN;
-    else if (renderParameters->specularExponent > SPECULAR_EXPONENT_MAX)
-        renderParameters->specularExponent = SPECULAR_EXPONENT_MAX;
-    
-    // reset the interface
-    renderWindow->ResetInterface();
-    } // RenderController::specularExponentChanged()
 
 // slot for toggling lighting
 void RenderController::useLightingCheckChanged(int state)
@@ -370,10 +256,6 @@ void RenderController::BeginScaledDrag(int whichButton, float x, float y)
         case Qt::LeftButton:
             renderWindow->modelRotator->BeginDrag(x, y);
             break;
-        // right button drags the light
-        case Qt::RightButton:
-            renderWindow->lightRotator->BeginDrag(x, y);
-            break;
         // middle button drags visually
         case Qt::MiddleButton:
             break;
@@ -393,10 +275,6 @@ void RenderController::ContinueScaledDrag(float x, float y)
         case Qt::LeftButton:
             renderWindow->modelRotator->ContinueDrag(x, y);
             break;
-        // right button drags the light
-        case Qt::RightButton:
-            renderWindow->lightRotator->ContinueDrag(x, y);
-            break;
         // middle button drags visually
         case Qt::MiddleButton:
             break;
@@ -414,10 +292,6 @@ void RenderController::EndScaledDrag(float x, float y)
         // left button drags the model
         case Qt::LeftButton:
             renderWindow->modelRotator->EndDrag(x, y);
-            break;
-        // right button drags the light
-        case Qt::RightButton:
-            renderWindow->lightRotator->EndDrag(x, y);
             break;
         // middle button drags visually
         case Qt::MiddleButton:

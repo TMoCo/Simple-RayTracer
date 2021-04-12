@@ -27,7 +27,6 @@ class Surfel {
         // interpolate the values from the triangle data
         void InterpolateProperties(
             TexturedObject* object, RenderParameters* params);
-
         // surface BRDF at the surfel
         RGBRadiance BRDF(const Cartesian3& inDir, const Cartesian3& outDir) const;
 
@@ -50,13 +49,14 @@ class Surfel {
         RGBRadiance lambertAlbedo_;
         RGBRadiance glossyAlbedo_;
         RGBRadiance impulseAlbedo_;
+        
         float glossyExponent_;
         float distanceToEye;
         float extinction_;    
         float impulse_;
         // to detect if the surfel belongs to a light 
         bool isLight_;
-        unsigned int lightId_;
+        bool isValid = false;
 };
 
 #endif

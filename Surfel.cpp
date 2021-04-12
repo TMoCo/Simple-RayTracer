@@ -1,21 +1,20 @@
+#include <algorithm>
+
 #include "math.h"
 #include "Surfel.h"
 
 // interpolate surfel properties from triangle data
 void Surfel::InterpolateProperties(
-    TexturedObject* object, RenderParameters* params) {
-    // we dont normalise interpolated value as interpolation keeps length roughly 1
-    normal_ = barycentric_.alpha * object->normals[triangle_->normals[0]] +
-        barycentric_.beta * object->normals[triangle_->normals[1]] +
-        barycentric_.gamma * object->normals[triangle_->normals[2]];
-
-    // rotate the normal
-    normal_ = params->rotationMatrix * normal_;
-    
+    TexturedObject* object, RenderParameters* params) {    
     texCoord_ = barycentric_.alpha * object->textureCoords[triangle_->texCoords[0]] +
         barycentric_.beta * object->textureCoords[triangle_->texCoords[1]] +
         barycentric_.gamma * object->textureCoords[triangle_->texCoords[2]];
 
+    /*
+    normal_ = barycentric_.alpha * object->normals[triangle_->normals[0]] +
+        barycentric_.beta * object->normals[triangle_->normals[1]] +
+        barycentric_.gamma * object->normals[triangle_->normals[2]];
+    */
     // We will want to change this part of the function later to interpolate vertex
     // data (means changing the input files etc), for now just set to UI values
     emission_ = RGBRadiance(object->materials[triangle_->material]->emmisive[0],
@@ -38,10 +37,9 @@ void Surfel::InterpolateProperties(
 // surface BRDF at the surfel
 RGBRadiance Surfel::BRDF(const Cartesian3& outDir, const Cartesian3& inDir) const {
     // lambertian
-    float lambertian = normal_.dot(inDir) / inDir.length();
+    float lambertian = normal_.dot(inDir);
     // glossy
-    Cartesian3 outInDiv2 = (outDir + inDir) / 2.0;
-    float glossy = pow(normal_.dot(outInDiv2) / outInDiv2.length(), glossyExponent_);
+    float glossy = pow(normal_.dot((outDir + inDir) * 0.5f), glossyExponent_);
 
     // return lambertian + glossy component
     return lambertAlbedo_ * lambertian + glossyAlbedo_ * glossy;

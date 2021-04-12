@@ -69,15 +69,10 @@ class RenderParameters
         yTranslate(0.0),
         zoomScale(1.0),
         samples_(1),
-        emissiveLight(0.0),
-        ambientLight(0.2),
-        diffuseLight(0.6),
-        specularLight(0.3),
-        specularExponent(4.0),
-        useLighting(false),
+        useLighting(true),
         texturedRendering(false),
         textureModulation(false),
-        showObject(false),
+        showObject(true),
         centreObject(false),
         scaleObject(false)
         { // constructor

@@ -51,7 +51,6 @@ class RenderWindow : public QWidget
 
     // custom widgets
     ArcBallWidget               *modelRotator;
-    ArcBallWidget               *lightRotator;
     RenderWidget                *renderWidget;
     RaytraceRenderWidget        *raytraceRenderWidget;
 
@@ -74,21 +73,10 @@ class RenderWindow : public QWidget
     QSlider                     *zoomSlider;
 
     // sliders for setting lighting parameters
-    QSlider                     *emissiveLightSlider;
-    QSlider                     *ambientLightSlider;
-    QSlider                     *diffuseLightSlider;
-    QSlider                     *specularLightSlider;
-    QSlider                     *specularExponentSlider;
     QSlider                     *samplesNbSlider;
 
     // labels for sliders & arcballs
     QLabel                      *modelRotatorLabel;
-    QLabel                      *lightRotatorLabel;
-    QLabel                      *yTranslateLabel;
-    QLabel                      *zoomLabel;
-    QLabel                      *emissiveLightLabel;
-    QLabel                      *ambientLightLabel;
-    QLabel                      *specularLightLabel;
 
     // button for raytracing
     QPushButton                 *rayTraceImageButton;

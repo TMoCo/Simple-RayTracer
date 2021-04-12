@@ -29,23 +29,26 @@ class RayTracer {
             const long& begin, const long& rows, const Cartesian3& eyePos);
 
         // path trace a single ray
-        RGBRadiance PathTrace(const Ray& ray, const RGBRadiance& combinedAlbedo);
+        RGBRadiance PathTrace(const Ray& ray, const RGBRadiance& combinedAlbedo, int& depth);
 
         // get the transformations set through UI
         Matrix4 GetTransform(const bool& inverse, const float& scale);
             
         // return a pointer to a surfel at intersection of ray with object
-        Surfel ClosestTriangleIntersect(const Ray& ray);
+        bool ClosestTriangleIntersect(const Ray& ray, Surfel* surfel);
 
         // lighting methods
         RGBRadiance DirectLight(
             const Surfel& surfel, const Cartesian3& outDir, const Light& light);
         RGBRadiance IndirectLight(
             const Surfel& surfel, const Cartesian3& outDir, 
-            const RGBRadiance& combinedAlbedo);
+            const RGBRadiance& combinedAlbedo, int& depth);
         
         // Monte Carlo integration, returns a direction vector
         Cartesian3 MonteCarlo3D(const Cartesian3& normal);
+        
+        // reflects a direction vector around a given normal
+        Cartesian3 Reflect(const Cartesian3& dir, const Cartesian3& normal);
 
         // return a random number between a given range
         float RandomRange(float lower, float upper);
